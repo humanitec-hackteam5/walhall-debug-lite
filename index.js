@@ -1,15 +1,6 @@
 const http = require('http');
 
-async function testDatabase(user, password, database, host, port) {
-  const { Pool } = require('pg')
-  const pool = new Pool({
-    user: user,
-    password: password,
-    database: database,
-    host: host,
-    port: port
-  })
-
+async function testDatabase(pool) {
   const dbReport = {}
   await pool.query('SELECT NOW()', (err, res) => {
       if (err) {
@@ -28,13 +19,16 @@ const httpServer = http.createServer((req, res) => {
   // Log all requests made to the server
   console.log(`${req.method} ${req.url}`)
 
-  testDatabase(
-    process.env.DATABASE_USER,
-    process.env.DATABASE_PASSWORD,
-    process.env.DATABASE_NAME,
-    process.env.DATABASE_HOST,
-    process.env.DATABASE_PORT
-  )
+  const { Pool } = require('pg')
+  const pool = new Pool({
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE_NAME,
+    host: process.env.DATABASE_HOST,
+    port: process.env.DATABASE_PORT
+  })
+  
+  testDatabase(pool)
   .then(async (dbReport) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json')
