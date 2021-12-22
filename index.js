@@ -14,8 +14,9 @@ async function testDatabase(user, password, database, host, port) {
   await pool.query('SELECT NOW()', (err, res) => {
       if (err) {
         dbReport.error = err.toString()
+        dbReport.success = false
       } else {
-        dbReport.result = res
+        dbReport.success = true
       }
     })
   await pool.end()   
