@@ -16,24 +16,25 @@ async function testDatabase(pool) {
 }
 
 const httpServer = http.createServer((req, res) => {
-  // Log all requests made to the server
   console.log(`${req.method} ${req.url}`)
 
-  const { Pool } = require('pg')
-  const pool = new Pool({
+  const params = {
     user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE_NAME,
     host: process.env.DATABASE_HOST,
     port: process.env.DATABASE_PORT
-  })
+  }
+
+  const { Pool } = require('pg')
+  const pool = new Pool(params)
   
   testDatabase(pool)
   .then(async (dbReport) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json')
     const data = {
-      env : process.env,
+      params : params,
       database: dbReport
     }
     res.end(JSON.stringify(data))  
