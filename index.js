@@ -1,8 +1,8 @@
 const http = require('http');
 
 async function testDatabase(user, password, database, host, port) {
-  const { Client } = require('pg')
-  const client = new Client({
+  const { Pool } = require('pg')
+  const pool = new Pool({
     user: user,
     password: password,
     database: database,
@@ -11,21 +11,14 @@ async function testDatabase(user, password, database, host, port) {
   })
 
   const dbReport = {}
-  await client.connect(err => {
-    if (err) {
-      dbReport.error = err.toString()
-    }
-  })
-  if (!dbReport.error) {
-    await client.query('SELECT NOW()', (err, res) => {
-        if (err) {
-          dbReport.error = err.toString()
-        } else {
-          dbReport.result = res
-        }
-      })    
-    await client.end()
-  }
+  await pool.query('SELECT NOW()', (err, res) => {
+      if (err) {
+        dbReport.error = err.toString()
+      } else {
+        dbReport.result = res
+      }
+    })
+  await pool.end()   
 
   return dbReport
 }
