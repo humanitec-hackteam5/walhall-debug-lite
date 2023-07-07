@@ -1,4 +1,4 @@
-# walhall-debug
+# walhall-debug-lite
 
 A container that excercises functionality in Walhall to aid with debugging issues.
 
